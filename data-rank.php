@@ -1,18 +1,12 @@
-﻿<?php //Code by Hung Phu - Update: 5/10/2019
-	include_once("includes/connect.php");
+﻿<?php //Code by Hung Phu - Update 03/04/2020
+	include_once("includes/config.php");
 	$hp_tong_thanh_vien = 0; 
-	$hp_sql_query = "SELECT * FROM caidat WHERE id='1'";
-	$hp_get_setting = $db_connect->query($hp_sql_query); 
-	$hp_setting = $hp_get_setting->fetch_assoc();
-	//Get thong tin admin tren BXH
-	if ($hp_setting['adminsubmit'] == 1) $booladmin = true;
-		else $booladmin = false;
 	//Get ket qua
-	$hp_result = $db_connect->query("SELECT username FROM ".$hp_setting['cosodulieu']."");
+	$hp_get_result = $db_connect->query("SELECT username FROM ".$hp_main_table."");
 	$db_connect->set_charset("utf8");
-	if ($hp_result->num_rows > 0){
-		while($row = $hp_result->fetch_assoc()){
-			if ($booladmin == true) { //Bang diem co admin
+	if ($hp_get_result->num_rows > 0){
+		while($row = $hp_get_result->fetch_assoc()){
+			if ($hp_main_setting['adminsubmit'] == 1) { //Bang diem co admin
 				$hp_tong_thanh_vien = $hp_tong_thanh_vien + 1;
 				$hp_name_user[$hp_tong_thanh_vien] = $row["username"];
 			} else { //Bang diem khong co admin
@@ -30,30 +24,29 @@
 <td align="center"><b>Rank</b></td>
 <td align="center"><b>Username</b></td>
 <td align="center"><b>Tên thành viên</b></td>
-<?php //Code by Hung Phu - Update: 6/10/2019
-	require_once("includes/config.php");
+<?php
 	//So luong bai tap
 	$hp_so_luong_bai_tap = 0;
 	$hp_total_sum = 0;
-	$hp_dir_it = new DirectoryIterator($hp_dir_tests);
+	$hp_dir_it = new DirectoryIterator($hp_main_contest_dir_tests);
 	//Get problem
 	while($hp_dir_it->valid()) {
 		if (!$hp_dir_it->isDot()){	
 			$hp_problem = strtoupper($hp_dir_it->getFilename());
-			$hp_dir_tests_2 = $hp_dir_tests.$hp_problem."/";
+			$hp_main_contest_dir_tests_2 = $hp_main_contest_dir_tests.$hp_problem."/";
 			$hp_so_luong_bai_tap = $hp_so_luong_bai_tap+1;
 			$hp_name_problem[$hp_so_luong_bai_tap] = $hp_problem;
 			//Get tests
 			$slt = 0;
-			$hp_dir_tmp = opendir($hp_dir_tests_2);
+			$hp_dir_tmp = opendir($hp_main_contest_dir_tests_2);
 			while (($file = readdir($hp_dir_tmp)) !== false) {
-				if ($file != "." && $file != ".." && is_dir($hp_dir_tests_2 . DIRECTORY_SEPARATOR . $file)) {
+				if ($file != "." && $file != ".." && is_dir($hp_main_contest_dir_tests_2 . DIRECTORY_SEPARATOR . $file)) {
 					$slt++;
 				}
 			}
 			closedir($hp_dir_tmp);
 			$hp_total_sum = $hp_total_sum + $slt;
-			echo "<td align='center'><b><i>".$hp_problem."<br>(".$slt." điểm)</i></b></td>";		
+			echo "<td align='center'><b><i>".$hp_problem."<br>(".$slt." tests)</i></b></td>";		
 		}
 		$hp_dir_it->next();
 	}
@@ -64,20 +57,20 @@
 			$hp_point[$hp_name_user[$i]][$hp_name_problem[$j]] = $hp_not_submit;
 		}
 	}		
-	$hp_dir_it_2 = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($hp_dir_logs));
+	$hp_dir_it_2 = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($hp_main_contest_dir_logs));
 	while($hp_dir_it_2->valid()){
 		if (!$hp_dir_it_2->isDot()){	
 			$hp_data_info= $hp_dir_it_2->getSubPathName();		
 			$r = explode(']', $hp_data_info);
 			$user = trim($r[0], '[');
 			$bai = strtoupper(trim($r[1], '['));
-			$link = $hp_dir_logs. $hp_dir_it_2->getSubPathName();
+			$link = $hp_main_contest_dir_logs.$hp_dir_it_2->getSubPathName();
 			$fi = fopen($link, "r");
 			$data = fgets($fi);
 			fclose($fi);
 			preg_match ('#: (.+?)\n#s',$data,$res);
-			//Get info user 
-			$hp_sql_query = "SELECT id, username FROM ".$hp_setting['cosodulieu']." WHERE username='{$user}'";
+			//Get info user
+			$hp_sql_query = "SELECT id, username FROM ".$hp_main_table." WHERE username='{$user}'";
 			$hp_get_member = $db_connect->query($hp_sql_query); 
 			$hp_member = $hp_get_member->fetch_assoc();
 			$hp_point[$user][$bai]=$res[1];						
@@ -91,7 +84,7 @@
 <?php //Code by Hung Phu - Update: 6/10/2019
 	$sumpoint[0]=0;
 	for ($i = 1; $i <= $hp_tong_thanh_vien; $i++){
-		$hp_sql_query_1 = "SELECT name, color FROM ".$hp_setting['cosodulieu']." WHERE username='{$hp_name_user[$i]}'";
+		$hp_sql_query_1 = "SELECT name, color FROM ".$hp_main_table." WHERE username='{$hp_name_user[$i]}'";
 		$hp_get_member_2 = $db_connect->query($hp_sql_query_1); 
 		$hp_member_2 = $hp_get_member_2->fetch_assoc(); 
 		$s=0;

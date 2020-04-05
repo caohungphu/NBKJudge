@@ -1,65 +1,37 @@
-<?php
+<?php //Code by Hung Phu - Update 03/04/2020
 include_once("includes/config.php");
+include_once("functions.php");
 header('Content-Type: text/html; charset=UTF-8');
+
 if(isset($_REQUEST["file"])){
-    // Get parameters
-    $file = urldecode($_REQUEST["file"]);
-    $filepath = $hp_dir_share_files . $file;
-    // Process download
-    if(file_exists($filepath)) {
-        header('Content-Description: File Transfer');
-        header('Content-Type: application/octet-stream');
-        header('Content-Disposition: attachment; filename="[NBKJudge]'.basename($filepath).'"');
-        header('Expires: 0');
-        header('Cache-Control: must-revalidate');
-        header('Pragma: public');
-        header('Content-Length: ' . filesize($filepath));
-        flush();
-        readfile($filepath);
-        exit;
-    }
+	$file = urldecode($_REQUEST["file"]);
+	$filepath = $hp_main_contest_dir_files.$file;
+	if(file_exists($filepath)){
+		if (strpos($file, "doc") > 0)
+			zip_and_download_doc_file($hp_main_contest_dir_tmp_files, $hp_main_contest_dir_files.$file);
+		else 
+			download_file($filepath);
+	}
 }
 
 if(isset($_REQUEST["tests"])){
-    // Get parameters
     $file = urldecode($_REQUEST["tests"]);
 	$numtest = urldecode($_REQUEST["numtest"]);
 	$problem = urldecode($_REQUEST["problem"]);
-    $filepath = $hp_dir_tests . $problem . "/" . $numtest . "/" . $file;
+    $filepath = $hp_main_contest_dir_tests . $problem . "/" . $numtest . "/" . $file;
     // Process download
     if(file_exists($filepath)) {
-        header('Content-Description: File Transfer');
-        header('Content-Type: application/octet-stream');
-        header('Content-Disposition: attachment; filename="'.basename($filepath).'"');
-        header('Expires: 0');
-        header('Cache-Control: must-revalidate');
-        header('Pragma: public');
-        header('Content-Length: ' . filesize($filepath));
-        flush();
-        readfile($filepath);
-        exit;
+         download_test_file($filepath);
     }
 }
 
 if(isset($_REQUEST["history"])){
-    // Get parameters
     $file = urldecode($_REQUEST["history"]);
-    $filepath = $hp_dir_logs . $file;
-    // Process download
+    $filepath = $hp_main_contest_dir_logs . $file;
     if(file_exists($filepath)) {
-        header('Content-Description: File Transfer');
-        header('Content-Type: application/octet-stream');
-        header('Content-Disposition: attachment; filename="[NBKJudge]'.basename($filepath).'.txt"');
-        header('Expires: 0');
-        header('Cache-Control: must-revalidate');
-        header('Pragma: public');
-        header('Content-Length: ' . filesize($filepath));
-        flush();
-        readfile($filepath);
-        exit;
+         download_history_file($filepath);
     }
 }
-
 
 print <<<EOF
 

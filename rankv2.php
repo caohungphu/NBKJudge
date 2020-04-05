@@ -1,18 +1,14 @@
-<?php //Code by Hung Phu - Update: 7/10/2019
+<?php //Code by Hung Phu - Update: 03/04/2020
 	include_once("includes/header.php");
 	if(!isset($_GET["NBKJudge"])){$_GET["NBKJudge"]='';}
-	$hp_sql_query = "SELECT * FROM caidat WHERE id='1'";
-	$hp_get_setting = $db_connect->query($hp_sql_query); 
-	$hp_setting = $hp_get_setting->fetch_assoc();
-	$hp_allow_viewrank = "{$hp_setting['viewrank']}";
-	if ($hp_allow_viewrank==0){
+	if ($hp_main_setting['viewrank'] == 0){
 		if (isset($_SESSION['user_id'] )){
 			$user_id = intval($_SESSION['user_id']);
-			$hp_sql_query = "SELECT * FROM ".$hp_setting['cosodulieu']." WHERE id='{$user_id}'";
+			$hp_sql_query = "SELECT * FROM ".$hp_main_table." WHERE id='{$user_id}'";
 			$hp_get_member = $db_connect->query($hp_sql_query); 
 			$hp_member = $hp_get_member->fetch_assoc();
 			if ($hp_member['admin'] == "0"){
-				if ($hp_allow_viewrank == 0){
+				if ($hp_main_setting['viewrank'] == 0){
 					print "<script>Swal.fire( 'Admin đã tắt bảng điểm!', 'Vui lòng liên hệ admin!!', 'error' );</script>";
 					include_once("includes/footer.php"); 
 					print "<meta http-equiv='refresh' content='0; ./'>";
@@ -27,6 +23,24 @@
 		}
 	}
 ?>
+<style>
+.hp_form_submit{
+	float: right;
+	margin: 10px;
+    overflow: hidden;
+}
+.hp_form_border{
+	text-align: center;
+	border: 2px dashed #3CB371; 
+	border-radius: 2% 2% 2% 2%;	
+}
+</style>
+<div class="hp_form_submit">
+	<form class="hp_form_border" action="submit.php?action=submit" method="post" enctype="multipart/form-data">
+	</span><input type="file" name="fileToUpload" id="fileToUpload">	
+	<input type="submit" name="submit" value="Nộp bài" class="btn btn-primary">		
+	</form>
+</div>
 <section class="forms">
     <div class="container-fluid">
 	    <!-- Page Header-->

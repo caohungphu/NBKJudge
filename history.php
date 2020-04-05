@@ -1,20 +1,14 @@
-<?php //Code by Hung Phu - Update: 7/10/2019
+<?php //Code by Hung Phu - Update: 03/04/2020
 	include_once("includes/header.php"); 
-	include_once("includes/config.php"); 
 	if(!isset($_GET["NBKJudge"])){$_GET["NBKJudge"]='';}
 	if (!$_SESSION['user_id']){ 
-		include_once("includes/header.php");
 		print "<script>Swal.fire('Chưa đăng nhập!', 'Hệ thống đang chuyển hướng về trang đăng nhập', 'error' );</script>";
 		include_once("includes/footer.php");
 		print "<meta http-equiv='refresh' content='0; ./?NBKJudge=login'>";
 	} else {
-		$hp_sql_query_1 = "SELECT * FROM caidat WHERE id='1'"; 
-		$hp_get_setting = $db_connect->query($hp_sql_query_1); 
-		$hp_setting = $hp_get_setting->fetch_assoc();
-		$hp_allow_history = $hp_setting['document'];
 		//Xet xem co phai admin
 		if ($_SESSION['user_id'] != 1){
-			if ($hp_allow_history == 0){
+			if ($hp_main_setting['document'] == 0){
 				print "<script>Swal.fire( 'Admin đã tắt lịch sử!', 'Hệ thống đang chuyển hướng về trang chủ', 'error' );</script>";
 				include_once("includes/footer.php");
 				print "<meta http-equiv='refresh' content='0; ./'>";
@@ -23,7 +17,6 @@
 		}
 //Main
 print <<<EOF
-
 <section class="forms">
     <div class="container-fluid">
         <!-- Page Header-->
@@ -34,19 +27,21 @@ print <<<EOF
 				<div class="col-lg-12">
 					<div class="card">	
 						<div class="card-header">
-							<h4><center>Lịch sử chấm bài - NBK Judge</center></h4>
+EOF;
+echo "<h4><center>Lịch sử chấm bài - ".$hp_main_info_name."</center></h4>";
+print <<<EOF
 						</div>
-						<div class="card-body">
+					<div class="card-body">
 <table class="table table-bordered table-hover table-striped"> 
 <thead>
 <td align="center"><b>Tên file</b></td>
 <td align="center"><b>Thời gian nộp</b></td>
 EOF;
 //PHP code
-	$dir = opendir($hp_dir_logs);
+	$dir = opendir($hp_main_contest_dir_logs);
 	date_default_timezone_set('Asia/Ho_Chi_Minh');
 	$hpid = $_SESSION['user_id'];
-	$hp_sql_query_1 = "SELECT username FROM members WHERE id='$hpid'";
+	$hp_sql_query_1 = "SELECT username FROM {$hp_main_table} WHERE id='$hpid'";
 	$hp_get_member = $db_connect->query($hp_sql_query_1); 
 	$hp_member = $hp_get_member->fetch_assoc();
 	$hpname = $hp_member['username'];
@@ -54,7 +49,7 @@ EOF;
 		while ($file = readdir($dir)) { 
 			if ($file!="." && $file!=".." && substr($file,0,strlen($file)-4)!="allproblems" )  {
 				echo "<tr><td align='center'><a target='_blank' href='./download.php?history=".$file."'>".$file."</a></td>";
-				echo "<td align='center'>".date("H:i:s - d/m/Y", filemtime($hp_dir_logs.$file))." </td></tr>";
+				echo "<td align='center'>".date("H:i:s - d/m/Y", filemtime($hp_main_contest_dir_logs.$file))." </td></tr>";
 			}
 		}
 	closedir($dir);
@@ -66,7 +61,7 @@ EOF;
 			$namebai3 = explode(".", $namebai2[1]);
 			$namebaiok = $namebai2[0].".".$namebai3[1];
 			echo "<tr><td align='center'><a target='_blank' href='./download.php?history=".$file."'>".strtoupper($namebaiok)."</a></td>";
-			echo "<td align='center'>".date("H:i:s - d/m/Y", filemtime($hp_dir_logs.$file))."</td></tr>";
+			echo "<td align='center'>".date("H:i:s - d/m/Y", filemtime($hp_main_contest_dir_logs.$file))."</td></tr>";
 		}
 	}
 	closedir($dir);

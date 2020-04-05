@@ -1,4 +1,4 @@
-<?php //Code by Hung Phu - Update: 7/10/2019
+<?php //Code by Hung Phu - Update 03/04/2020
 	include_once("includes/config.php"); 
 	//Function
 	function getFileName($s) {
@@ -21,7 +21,7 @@
 	}
 	function updatectts(&$name, &$pos, &$exist){ if ($exist) return 0; $pos = $name; $exist = 1; return 1; }
 	function updateprbs(&$name, &$pos, &$exist){ if ($exist) return 0; $pos = $name; $exist = 1; return 1; }
-	$hp_dir = $hp_dir_logs;
+	$hp_dir = $hp_main_contest_dir_logs;
 	$cntc = $cntp = 0;
 	$reg_cttants = $reg_problems = $sum = $last = $hp_name_user = $hp_problems = array();
 	$data = $log = $ac = array(array());
@@ -150,7 +150,7 @@
             for ($j = 0; $j < $cntp; ++$j){
 				echo "<td class = 'score' style='color:#fff;background-color:".$ac[$hp_name_user[$i]][$hp_problems[$j]].";-moz-border-radius: 10px;-webkit-border-radius: 10px;-ms-border-radius: 10px;-o-border-radius: 10px;border-radius: 10px;'>";
 				if($data[$hp_name_user[$i]][$hp_problems[$j]]) 
-					echo "<a onclick=wload('".$logssubDir.rawurlencode($log[$hp_name_user[$i]][$hp_problems[$j]])."')> <b>".$data[$hp_name_user[$i]][$hp_problems[$j]].getpen($hp_name_user[$i], $hp_problems[$j])."</b> </a>";
+					echo "<b>".$data[$hp_name_user[$i]][$hp_problems[$j]].getpen($hp_name_user[$i], $hp_problems[$j])."</b>";
 				echo " </td>";
             }
 		} else {
@@ -159,7 +159,7 @@
             echo "<td style='color:black' class='contestant-cell dark'><b>".sprintf("%0.2f", $sum[$hp_name_user[$i]])."</b></td>";
             for ($j = 0; $j < $cntp; ++$j){
 				echo "<td class='score contestant-cell dark' style='color:#fff;background-color:".$ac[$hp_name_user[$i]][$hp_problems[$j]].";-moz-border-radius: 10px;-webkit-border-radius: 10px;-ms-border-radius: 10px;-o-border-radius: 10px;border-radius: 10px;'>";
-				if($data[$hp_name_user[$i]][$hp_problems[$j]]) echo "<a onclick=wload('".$logssubDir.rawurlencode($log[$hp_name_user[$i]][$hp_problems[$j]])."')> <b>".$data[$hp_name_user[$i]][$hp_problems[$j]].getpen($hp_name_user[$i], $hp_problems[$j])."</b> </a> ";
+				if($data[$hp_name_user[$i]][$hp_problems[$j]]) echo "<b>".$data[$hp_name_user[$i]][$hp_problems[$j]].getpen($hp_name_user[$i], $hp_problems[$j])."</b>";
 				echo "</td>";
             }
         }

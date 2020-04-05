@@ -1,18 +1,14 @@
-<?php //Code by Hung Phu - Update: 7/10/2019
+<?php //Code by Hung Phu - Update 02/04/2020
 	include_once("includes/header.php");
 	if(!isset($_GET["NBKJudge"])){$_GET["NBKJudge"]='';}
 	if (isset($_GET['action']) && $_GET['action'] == "login"){
 		//Get username + pass
 		$username = addslashes($_POST['username']);
 		$password = md5(addslashes( $_POST['password']));
-		//Get data table
-		$hp_sql_query = "SELECT * FROM caidat WHERE id=1";
-		$hp_get_csdl = $db_connect->query($hp_sql_query); 
-		$hp_csdl = $hp_get_csdl->fetch_assoc();
-		$hp_csdl_main = $hp_csdl['cosodulieu'];
-		$hp_sql_query_2 = "SELECT id, username, admin, password FROM ".$hp_csdl_main." WHERE username='{$username}'";
+		//Get data from SQL
+		$hp_sql_query = "SELECT id, username, admin, password FROM ".$hp_main_table." WHERE username='{$username}'";
 		//Check member
-		$hp_get_member = $db_connect->query($hp_sql_query_2); 
+		$hp_get_member = $db_connect->query($hp_sql_query); 
 		$hp_member = $hp_get_member->fetch_assoc();
 		if ($hp_get_member->num_rows <= 0){
 			include_once("includes/header.php");

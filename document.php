@@ -1,20 +1,15 @@
-<?php //Code by Hung Phu - Update: 7/10/2019
+<?php //Code by Hung Phu - Update 03/04/2020
 	include_once("includes/header.php"); 
-	include_once("includes/config.php"); 
 	if(!isset($_GET["NBKJudge"])){$_GET["NBKJudge"]='';}
 	if (!$_SESSION['user_id']){ 
-		include_once("includes/header.php");
 		print "<script>Swal.fire('Chưa đăng nhập!', 'Hệ thống đang chuyển hướng về trang đăng nhập', 'error' );</script>";
 		include_once("includes/footer.php");
 		print "<meta http-equiv='refresh' content='0; ./?NBKJudge=login'>";
+		exit;
 	} else {
-		$hp_sql_query_1 = "SELECT * FROM caidat WHERE id='1'"; 
-		$hp_get_setting = $db_connect->query($hp_sql_query_1); 
-		$hp_setting = $hp_get_setting->fetch_assoc();
-		$hp_allow_document = $hp_setting['document'];
 		//Xet xem co phai admin
 		if ($_SESSION['user_id'] != 1){
-			if ($hp_allow_document == 0){
+			if ($hp_main_setting['document'] == 0){
 				print "<script>Swal.fire( 'Admin đã tắt tài liệu!', 'Hệ thống đang chuyển hướng về trang chủ', 'error' );</script>";
 				include_once("includes/footer.php");
 				print "<meta http-equiv='refresh' content='0; ./'>";
@@ -23,7 +18,6 @@
 		}
 //Main
 print <<<EOF
-
 <section class="forms">
     <div class="container-fluid">
         <!-- Page Header-->
@@ -34,7 +28,9 @@ print <<<EOF
 				<div class="col-lg-12">
 					<div class="card">	
 						<div class="card-header">
-							<h4><center>Tài liệu - NBK Judge</center></h4>
+EOF;
+echo "<h4><center>Tài liệu - ".$hp_main_info_name." - Thư mục: ".$hp_main_contest_folder."</center></h4>";
+print <<<EOF
 						</div>
 						<div class="card-body">
 <table class="table table-bordered table-hover table-striped"> 
@@ -44,11 +40,11 @@ print <<<EOF
 <td align="center"><b>Link download</b></td>
 EOF;
 //PHP code
-	$dir = opendir($hp_dir_share_files);
+	$dir = opendir($hp_main_contest_dir_files);
 	while ($file = readdir($dir)) { 
 		if ($file!="." && $file!=".." && substr($file,0,strlen($file)-4)!="allproblems") {
 			echo "<tr><td align='center'><b>".$file."</b></td>";
-			echo "<td align='center'>".round(filesize($hp_dir_share_files.$file) * 0.000001)." MB</td>";
+			echo "<td align='center'>".round(filesize($hp_main_contest_dir_files.$file) * 0.000001)." MB</td>";
 			echo "<td align='center'><a target='_blank' href='./download.php?file=".$file."'>Download</a></td></tr>";
 
 	}}

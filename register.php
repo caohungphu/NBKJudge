@@ -1,14 +1,10 @@
-<?php //Code by Hung Phu - Update: 7/10/2019
+<?php //Code by Hung Phu - Update 02/04/2020
 	include_once("includes/header.php");
 	if(!isset($_GET["NBKJudge"])){$_GET["NBKJudge"]='';}
 	if ((!isset($_SESSION['user_id'])) or ($_SESSION['user_id']==1)){
 		//Tat dang ki
-		$hp_sql_query = "SELECT * FROM caidat WHERE id='1'"; 
-		$hp_get_setting = $db_connect->query($hp_sql_query); 
-		$hp_setting = $hp_get_setting->fetch_assoc();
-		$hp_allow_register = "{$hp_setting['registration']}";
 		if (!isset($_SESSION['user_id'])) {
-		if ($hp_allow_register == 0) 
+		if ($hp_main_setting['registration'] == 0) 
 			{
 				print "<script>Swal.fire( 'Admin đã tắt đăng kí!', 'Hệ thống đang chuyển hướng về trang chủ', 'error' );</script>";
 				include_once("includes/footer.php");
@@ -30,7 +26,6 @@
 		$hp_color = $input_color[rand(0, count($input_color) - 1)];
 		//Check info
 		if ( ! $username || ! $_POST['password'] || ! $_POST['verify_password'] || ! $ten){
-			include_once("includes/header.php");
 			print "<script>Swal.fire( 'Thiếu thông tin!', 'Vui lòng nhập đầy đủ thông tin', 'error' );</script>";
 			include_once("includes/footer.php");
 			print "<meta http-equiv='refresh' content='0; ./?NBKJudge=register'>";
@@ -38,15 +33,13 @@
 		}
 		//Check user
 		if (!preg_match('/^[_a-z-0-9-A-Z]+$/', $username, $matches)){
-			include_once("includes/header.php");
 			print "<script>Swal.fire( 'Username không hợp lệ!', 'Username chỉ cho phép [a->z],[A->Z], [0->9]', 'error' );</script>";
 			include_once("includes/footer.php");
 			print "<meta http-equiv='refresh' content='0; ./?NBKJudge=register'>";
 			exit;
 		}
 		//Check user co trung hay khong
-		if ( $db_connect->query("SELECT username FROM ".$hp_setting['cosodulieu']." WHERE username='$username'")->num_rows>0){
-			include_once("includes/header.php");
+		if ( $db_connect->query("SELECT username FROM ".$hp_main_table." WHERE username='$username'")->num_rows>0){
 			print "<script>Swal.fire( 'Username đã có người dùng!', 'Vui lòng chọn username khác!', 'error' );</script>";
 			include_once("includes/footer.php");
 			print "<meta http-equiv='refresh' content='0; ./?NBKJudge=register'>";
@@ -54,23 +47,20 @@
 		}
 		//Check pass giong nhau
 		if ( $password != $verify_password ){
-			include_once("includes/header.php");
 			print "<script>Swal.fire( 'Mật khẩu không khớp!', 'Vui lòng nhập lại mật khẩu!', 'error' );</script>";
 			include_once("includes/footer.php");
 			print "<meta http-equiv='refresh' content='0; ./?NBKJudge=register'>";
 			exit;
 		}
 		//Dien form
-		$hp_set_form=$db_connect->query("INSERT INTO ".$hp_setting['cosodulieu']." (username, password, email, phone, name, birthday, color) VALUES ('{$username}', '{$password}', '{$email}', '{$phone}', '{$ten}', '{$sinhnhat}', '{$hp_color}')");
+		$hp_set_form=$db_connect->query("INSERT INTO ".$hp_main_table." (username, password, email, phone, name, birthday, color) VALUES ('{$username}', '{$password}', '{$email}', '{$phone}', '{$ten}', '{$sinhnhat}', '{$hp_color}')");
 		//Thong bao tao tai khoan
 		if ($hp_set_form){
-			include_once("includes/header.php");
 			print "<script>Swal.fire( 'Đăng kí thành công!', 'Hệ thống đang chuyển hướng về trang đăng nhập', 'success' );</script>";
 			include_once("includes/footer.php");
 			print "<meta http-equiv='refresh' content='0; ./?NBKJudge=login'>";
 			exit;
 		} else {
-			include_once("includes/header.php");
 			print "<script>Swal.fire( 'Đăng kí thất bại!', 'Vui lòng liên hệ admin để giải quyết!', 'error' );</script>";
 			include_once("includes/footer.php");
 			print "<meta http-equiv='refresh' content='0; ./'>";
@@ -138,7 +128,6 @@ print <<<EOF
 EOF;
 }
 } else {
-	include_once("includes/header.php");
 	print "<script>Swal.fire('Đã đăng nhập với tên {$hp_member['username']}', 'Hệ thống đang chuyển hướng về trang chủ', 'success' );</script>";
 	include_once("includes/footer.php");
 	print "<meta http-equiv='refresh' content='0; ./'>";
